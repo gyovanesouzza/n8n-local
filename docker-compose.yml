@@ -127,8 +127,7 @@ services:
         condition: service_healthy
       ollama-cpu:
         condition: service_started
-      n8n-import:
-        condition: service_completed_successfully
+
 
   ngrok:
     container_name: ngrok
