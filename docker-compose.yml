@@ -4,6 +4,7 @@ volumes:
   postgres_storage:
   ollama_storage:
   qdrant_storage:
+  redis_storage: 
 
 networks:
   n8n-public:
@@ -24,9 +25,11 @@ x-n8n: &service-n8n
     - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
     - N8N_USER_MANAGEMENT_JWT_SECRET=${N8N_USER_MANAGEMENT_JWT_SECRET}
     - OLLAMA_HOST=ollama:11434
+    - N8N_SECURE_COOKIE=false
     - N8N_HOST=0.0.0.0
     - N8N_PORT=5678
     - WEBHOOK_URL=${URL}
+    
   env_file:
     - env/.env
   volumes:
@@ -46,6 +49,7 @@ x-ollama: &service-ollama
 x-init-ollama: &init-ollama
   image: ollama/ollama:latest
   container_name: ollama-pull-llama
+  restart: unless-stopped
   volumes:
     - ollama_storage:/root/.ollama
   entrypoint: /bin/sh
@@ -75,7 +79,19 @@ services:
       retries: 10
     ports:
       - "5432:5432"
-      
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - n8n-internal
+    restart: unless-stopped
+    volumes:
+      - redis_storage:/data
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    
   qdrant:
     image: qdrant/qdrant
     container_name: qdrant
