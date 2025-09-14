@@ -82,6 +82,7 @@ services:
       - "--all"
       - "--config"
       - "/etc/ngrok.yml"
-    networks: ['n8n-network']
+    networks: 
+      - 'n8n-network'
     volumes:
       - ./ngrok.yml:/etc/ngrok.yml
