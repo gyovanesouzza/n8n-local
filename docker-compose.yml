@@ -6,14 +6,16 @@ volumes:
   ollama_storage:
 
 networks:
-  demo:
+  n8n-local:
+  n8n-network:
+    driver: bridge
 
 services:
   postgres:
     image: postgres:16-alpine
     hostname: postgres
     container_name: postgres
-    networks: ['demo']
+    networks: ['n8n-local']
     restart: unless-stopped
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -34,7 +36,7 @@ services:
     hostname: n8n
     container_name: n8n
     restart: unless-stopped
-    networks: ['demo']
+    networks: ['n8n-network', 'n8n-local']
     ports:
       - 5678:5678
     environment:
@@ -64,7 +66,7 @@ services:
     image: ollama/ollama:latest
     container_name: ollama
     profiles: ["cpu"]
-    networks: ['demo']
+    networks: ['n8n-local']
     restart: unless-stopped
     ports:
       - 11434:11434
@@ -82,6 +84,6 @@ services:
       - "--config"
       - "/etc/ngrok.yml"
     networks:
-      - demo
+      - n8n-network
     volumes:
       - ./ngrok.yml:/etc/ngrok.yml
