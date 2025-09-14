@@ -46,7 +46,7 @@ x-ollama: &service-ollama
   volumes:
     - ollama_storage:/root/.ollama
 
-x-init-ollama: &init-ollama
+  x-init-ollama: &init-ollama
   image: ollama/ollama:latest
   container_name: ollama-pull-llama
   restart: unless-stopped
@@ -86,6 +86,8 @@ services:
     networks:
       - n8n-internal
     restart: unless-stopped
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
       - redis_storage:/data
     ports:
