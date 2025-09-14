@@ -46,7 +46,7 @@ x-ollama: &service-ollama
   volumes:
     - ollama_storage:/root/.ollama
 
-  x-init-ollama: &init-ollama
+x-init-ollama: &init-ollama
   image: ollama/ollama:latest
   container_name: ollama-pull-llama
   restart: unless-stopped
